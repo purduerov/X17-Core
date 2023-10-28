@@ -12,6 +12,7 @@ class ROVMainNode(Node):
     # rotation_Scaling = 1.5
     mode_fine = True
     fine_multiplier = 1.041
+    PID_enbale = False
 
     imu_angle_lock_enable = True  # TODO: setting this
     imu_velocity = [0.0, 0.0, 0.0]  # Tuple of [roll vel., pitch vel., yaw vel.]
@@ -29,6 +30,18 @@ class ROVMainNode(Node):
             ImuVelocityCommand,
             'imu_vel_command',
             self._imu_input,
+            10
+        )
+        self.PID_thrust_controll_sub = self.create_subscription(
+            RovVelocityCommand,
+            'PID_Depth_Controll_Thrust',
+            self._controller_input,
+            10
+        )
+        self.PID_thrust_controll_sub = self.create_subscription(
+            RovVelocityCommand,
+            'PID_enable',
+            self._controller_input,
             10
         )
         self.thrust_command_pub = self.create_publisher(ThrustCommandMsg, '/thrust_command', 10)
@@ -50,17 +63,30 @@ class ROVMainNode(Node):
         self.thrust_command_pub.publish(thrust_command)
 
     def _controller_input(self, msg):
-        self.controller_percent_power[0] = msg.twist.linear.x
-        self.controller_percent_power[1] = msg.twist.linear.y
-        self.controller_percent_power[2] = msg.twist.linear.z
-        self.controller_percent_power[3] = msg.twist.angular.x
-        self.controller_percent_power[4] = msg.twist.angular.y
-        self.controller_percent_power[5] = msg.twist.angular.z
+        if self.PID_enbale:
+            self.controller_percent_power[0] = 0
+            self.controller_percent_power[1] = 0
+            self.controller_percent_power[2] = msg.pid_updated_zvalue
+            self.controller_percent_power[2] = 0
+            self.controller_percent_power[3] = 0
+            self.controller_percent_power[4] = 0
+            self.controller_percent_power[5] = 0
+        else:
+            self.controller_percent_power[0] = msg.twist.linear.x
+            self.controller_percent_power[1] = msg.twist.linear.y
+            self.controller_percent_power[2] = msg.twist.linear.z
+            self.controller_percent_power[2] = msg.twist.linear.z
+            self.controller_percent_power[3] = msg.twist.angular.x
+            self.controller_percent_power[4] = msg.twist.angular.y
+            self.controller_percent_power[5] = msg.twist.angular.z
         self.mode_fine = msg.is_fine
         self.fine_multiplier = msg.multiplier
 
     def _imu_input(self, msg):
         self.imu_velocity = msg.angular
+        
+    def PID_enable_update(self, msg):
+        self.PID_enbale = msg.pid_enable
 
 
 def main(args=None):
