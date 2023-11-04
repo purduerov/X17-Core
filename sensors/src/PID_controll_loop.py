@@ -5,9 +5,9 @@ from simple_pid import PID
 from std_msgs.msg import Float64, Bool
 import matplotlib.pyplot as plt
 
-next_state = 0
-depth = 0
-desire_state = 0
+next_state = 0.0
+depth = 0.0
+desire_state = 0.0
 pid_enable = 0
 depth_plot = []
 thrust_plot = []
@@ -24,7 +24,7 @@ class PID_Depth_Controll_Pub(Node):
 
     def timer_callback(self):
         msg = Float64()
-        msg.data = next_state
+        msg.data = float(next_state)
         self.pub.publish(msg)
         
     def updatedepth(self, msg):
