@@ -9,13 +9,15 @@ next_state = 0.0
 depth = 0.0
 desire_state = 0
 pid_enable = 0
-depth_plot = []
-thrust_plot = []
+#depth_plot = []
+#thrust_plot = []
 time_counter = 1
 state =PID(1, 0.1, 0.05, setpoint=0)
 
 class PID_Depth_Controll_Pub(Node):
     def __init__(self):
+        global state
+        state.output_limits = (-1, 1)
         super().__init__('PID_Depth_Controll_publisher')
         self.sub = self.create_subscription(Float64, 'depth', self.updatedepth, 10)
         self.sub1 = self.create_subscription(Float64, 'desire_state', self.updatedesirestate, 10)
@@ -29,24 +31,26 @@ class PID_Depth_Controll_Pub(Node):
         global pid_enable
         global state
         global time_counter
+        
+        print(f"next_state{next_state}, depth{depth}, pid_enable{pid_enable}, time_counter{time_counter}")
 
         # Assume we have a system we want to control in controlled_system
         #v = controlled_system.update(0)
 
         if pid_enable:
-            depth_plot.append(depth)
+            #depth_plot.append(depth)
             # Compute new output from the PID according to the systems current value
             next_state = state.__call__(depth, time_counter)
-            thrust_plot.append(next_state)
+            #thrust_plot.append(next_state)
             
             time_counter += 1
             # Feed the PID output to the system and get its current value
 
-        if pid_enable: 
-            plt.plot(depth_plot, color = 'r', lable = 'depth')
-            plt.plot(thrust_plot, color = 'g', lable = 'thrust')
+        """ if pid_enable: 
+            plt.plot(depth_plot, color = 'r', label = 'depth')
+            plt.plot(thrust_plot, color = 'g', label = 'thrust')
             plt.legend()
-            plt.show
+            plt.show """
         
         msg = Float64()
         msg.data = float(next_state)
