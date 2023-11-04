@@ -3,11 +3,14 @@ import rclpy
 from rclpy.node import Node
 from simple_pid import PID
 from std_msgs.msg import Float64, Bool
+import matplotlib.pyplot as plt
 
 next_state = 0
 depth = 0
 desire_state = 0
 pid_enable = 0
+depth_plot = []
+thrust_plot = []
 
 class PID_Depth_Controll_Pub(Node):
     def __init__(self):
@@ -39,12 +42,18 @@ state = PID(1, 0.1, 0.05, setpoint=desire_state)
 #v = controlled_system.update(0)
 
 while pid_enable:
+    depth_plot.append(depth)
     # Compute new output from the PID according to the systems current value
     next_state = state.__call__(depth)
-    
+    thrust_plot.append(next_state)
     # Feed the PID output to the system and get its current value
-    
 
+if pid_enable: 
+    plt.plot(depth_plot, color = 'r', lable = 'depth')
+    plt.plot(thrust_plot, color = 'g', lable = 'thrust')
+    plt.legend()
+    plt.show
+    
 def main(args=None):
     rclpy.init(args = args)
     publisher = PID_Depth_Controll_Pub()
