@@ -11,6 +11,7 @@ desire_state = 0
 pid_enable = 0
 depth_plot = []
 thrust_plot = []
+time_counter = 1
 
 class PID_Depth_Controll_Pub(Node):
     def __init__(self):
@@ -44,8 +45,10 @@ state = PID(1, 0.1, 0.05, setpoint=desire_state)
 while pid_enable:
     depth_plot.append(depth)
     # Compute new output from the PID according to the systems current value
-    next_state = state.__call__(depth)
+    next_state = state.__call__(depth, time_counter)
     thrust_plot.append(next_state)
+    
+    time_counter += 1
     # Feed the PID output to the system and get its current value
 
 if pid_enable: 
