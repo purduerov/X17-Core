@@ -1,0 +1,48 @@
+name: X17-Core Build Test
+on:
+  push:
+    branches:
+      - camera_get_ip
+  pull_request:
+    branches:
+      - camera_get_ip
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04  # Use Ubuntu 22.04 (Jammy) for ROS 2 Humble
+    steps:
+      # Check out the repository
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      # Set up ROS 2 (Humble)
+      - name: Set up ROS 2
+        uses: ros-tooling/setup-ros@v0.7
+        with:
+          required-ros-distributions: humble
+      
+      # Install dependencies from requirements.txt
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y python3-pip
+      
+      # Execute the build script
+      - name: Build
+        run: |
+          chmod +x scripts/build.sh
+          scripts/build.sh
+      
+      # Execute the run script
+      - name: Start and check ROS 2 nodes
+        run: |
+          chmod +x scripts/run.sh
+          scripts/run.sh &
+          sleep 15  # Give nodes time to start
+          # Kill ROS 2 nodes
+          echo "Killing ROS 2 nodes:"
+          pkill -f ros2 || true    # Success message
+      
+      - name: Success
+        run: echo "Success!"
