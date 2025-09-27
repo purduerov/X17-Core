@@ -31,7 +31,7 @@ launch:
       param:
         - name: "dev_name"
           type: "str"
-          value: "device=/dev/video17"
+          value: "device=/dev/video19"
         - name: "port_num"
           type: "str"
           value: "5602"
