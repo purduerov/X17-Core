@@ -44,9 +44,10 @@ class IpSubscriberNode(Node):
         self.get_logger().info(f"Output of v4l2-ctl --list-devices: {output}")
         lines = output.splitlines()
         explorehd_devices = []
+
         i = 0
         while i < len(lines):
-            if "exploreHD" in lines[i]:
+            if "exploreHD" in lines[i] or "HD USB" in lines[i]:
                 devices = []
                 i += 1
                 while i < len(lines) and lines[i].startswith("\t"):
