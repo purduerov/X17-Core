@@ -47,7 +47,7 @@ class IpSubscriberNode(Node):
 
         i = 0
         while i < len(lines):
-            if "exploreHD" in lines[i] or "HD USB" in lines[i]:
+            if "exploreHD" in lines[i] or "Arducam" in lines[i]:
                 devices = []
                 i += 1
                 while i < len(lines) and lines[i].startswith("\t"):
