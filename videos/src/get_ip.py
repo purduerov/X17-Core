@@ -47,7 +47,7 @@ class IpSubscriberNode(Node):
 
         i = 0
         while i < len(lines):
-            if "exploreHD" in lines[i] or "Arducam" in lines[i]:
+            if "exploreHD" in lines[i] or "Arducam" in lines[i] or "Intel" in lines[i]:
                 devices = []
                 i += 1
                 while i < len(lines) and lines[i].startswith("\t"):
@@ -68,7 +68,7 @@ class IpSubscriberNode(Node):
         # Launch nodes with the discovered devices
         i = 1
         for device in explorehd_devices:
-            if i > 4:
+            if i > 6:
                 self.get_logger().info("Device limit reached, not launching more nodes.")
                 break
             else:
