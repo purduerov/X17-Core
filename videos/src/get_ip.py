@@ -12,7 +12,9 @@ import threading
 class IpSubscriberNode(Node):
     def __init__(self):
         super().__init__('ip_subscriber_node')
-        
+        self.get_logger().info(f'Starting node...')
+
+        self.get_logger().info(f'Starting {self.get_name()} node...')
         self.create_subscription(String, 'surface_ip', self.get_ip, 10)
 
         self.cameras_launched = False
@@ -42,9 +44,10 @@ class IpSubscriberNode(Node):
         self.get_logger().info(f"Output of v4l2-ctl --list-devices: {output}")
         lines = output.splitlines()
         explorehd_devices = []
+
         i = 0
         while i < len(lines):
-            if "exploreHD" in lines[i]:
+            if "exploreHD" in lines[i] or "Arducam" in lines[i]:
                 devices = []
                 i += 1
                 while i < len(lines) and lines[i].startswith("\t"):
